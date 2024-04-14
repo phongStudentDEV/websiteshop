@@ -83,6 +83,9 @@ public class WebSecurityConfig {
                                     String.format("%s/orders/**", apiPrefix)).hasRole(Role.USER)
 
                             .requestMatchers(HttpMethod.GET,
+                                    String.format("%s/orders/get-orders-by-keyword", apiPrefix)).hasRole(Role.ADMIN)
+
+                            .requestMatchers(HttpMethod.GET,
                                     String.format("%s/orders/**", apiPrefix)).permitAll()
 
                             .requestMatchers(HttpMethod.PUT,
@@ -90,6 +93,14 @@ public class WebSecurityConfig {
 
                             .requestMatchers(HttpMethod.DELETE,
                                     String.format("%s/orders/**", apiPrefix)).hasRole(Role.ADMIN)
+
+
+
+//                            .requestMatchers(HttpMethod.GET,
+//                                    String.format("%s/orders/user/{user_id}", apiPrefix)).permitAll()
+//
+//                            .requestMatchers(HttpMethod.GET,
+//                                    String.format("%s/orders/{id}", apiPrefix)).permitAll()
 
                             .requestMatchers(HttpMethod.POST,
                                     String.format("%s/order_details/**", apiPrefix)).hasAnyRole(Role.USER)
@@ -107,7 +118,7 @@ public class WebSecurityConfig {
                 })
                 .csrf(AbstractHttpConfigurer::disable);
 
-        http.cors( new Customizer<CorsConfigurer<HttpSecurity>>() {
+        http.cors(new Customizer<CorsConfigurer<HttpSecurity>>() {
             @Override
             public void customize(CorsConfigurer<HttpSecurity> httpSecurityCorsConfigurer) {
                 CorsConfiguration configuration = new CorsConfiguration();

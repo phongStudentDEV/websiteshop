@@ -17,6 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class ProductService implements IProductService {
     private final LocalizationUtils localizationUtils;
 
     @Override
+    @Transactional
     public Product createProduct(ProductDTO productDTO) throws Exception {
         Category existingCategory = categoryRepository.findById(
                 productDTO.getCategoryId())
@@ -50,13 +54,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> pageProduct(PageRequest pageRequest) {
-        Page<Product> productPage = productRepository.findAll(pageRequest);
-        Page<ProductResponse> productResponses = productPage.map(ProductResponse::fromProduct);
-        return productResponses;
+    public Page<ProductResponse> getAllProducts(String keyword,
+                                                Long categoryId, PageRequest pageRequest) {
+        // Lấy danh sách sản phẩm theo trang (page), giới hạn (limit), và categoryId (nếu có)
+        Page<Product> productsPage;
+        productsPage = productRepository.searchProducts(categoryId, keyword, pageRequest);
+        return productsPage.map(ProductResponse::fromProduct);
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existingProduct = getByIdProduct(id);
         if (existingProduct != null) {
@@ -83,11 +90,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Transactional
     public Boolean exitstsByName(String nameProduct) {
         return productRepository.existsByName(nameProduct);
     }
 
     @Override
+    @Transactional
     public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
         Product existingProduct = getByIdProduct(productId);
         ProductImage productImage = ProductImage.builder()
@@ -100,5 +109,9 @@ public class ProductService implements IProductService {
         }
 
         return productImageRepository.save(productImage);
+    }
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findProductsByIds(productIds);
     }
 }

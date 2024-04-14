@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -39,7 +40,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             // các request không cần kiểm tra token
-            if (isByPassToken(request)) {
+            if (isBypassToken(request)) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -68,21 +69,31 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     }
 
-    private Boolean isByPassToken(@NotNull HttpServletRequest request) {
-        final List<Pair<String, String>> byPassTokens = Arrays.asList(
+    private boolean isBypassToken(@NonNull HttpServletRequest request) {
+        final List<Pair<String, String>> bypassTokens = Arrays.asList(
                 Pair.of(String.format("%s/roles", apiPrefix), "GET"),
                 Pair.of(String.format("%s/products", apiPrefix), "GET"),
                 Pair.of(String.format("%s/categories", apiPrefix), "GET"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
-
         );
-        for (Pair<String, String> byPassToken : byPassTokens) {
-            if (request.getServletPath().contains(byPassToken.getFirst()) &&
-                    request.getMethod().equals(byPassToken.getSecond())) {
+
+        String requestPath = request.getServletPath();
+        String requestMethod = request.getMethod();
+
+        if (requestPath.equals(String.format("%s/orders", apiPrefix))
+                && requestMethod.equals("GET")) {
+            // Allow access to %s/orders
+            return true;
+        }
+
+        for (Pair<String, String> bypassToken : bypassTokens) {
+            if (requestPath.contains(bypassToken.getFirst())
+                    && requestMethod.equals(bypassToken.getSecond())) {
                 return true;
             }
         }
+
         return false;
     }
 }

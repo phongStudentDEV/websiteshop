@@ -41,7 +41,7 @@
                 [(ngModel)]="rememberMe"
               />
               <label class="form-check-label text-start" for="remember">
-                Ghi nhớ đăng nhập huhuauauuas</label
+                Ghi nhớ đăng nhập</label
               >
             </span>
             <a href="#" class="register-link">Quên mật khẩu</a>
@@ -63,10 +63,12 @@
         <div class="divider"></div>
         <p class="text-center">
           Bạn chưa đăng ký?
-          <span> <a href="#" class="register-link">Tạo tài khoản</a></span>
+          <span>
+            <a class="register-link" (click)="createAccount()">Tạo tài khoản</a>
+          </span>
         </p>
       </div>
     </div>
+    <app-footer></app-footer>
   </div>
-  <app-footer></app-footer>
 </div>

@@ -12,7 +12,7 @@
               class="form-control"
               [(ngModel)]="phoneNumber"
               (input)="onPhoneNumberChange()"
-              name="phoneNumber"
+              name="phone"
               (focus)="registerForm.form.markAsTouched()"
               required
               id="phoneNumber"
@@ -145,7 +145,6 @@
             </div>
           </div>
           <button type="button" (click)="register()" class="register-button">
-            <!-- <button type="button" (click)="register()" class="register-button"> -->
             Đăng ký
           </button>
           <div class="divider"></div>

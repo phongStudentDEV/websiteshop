@@ -17,6 +17,6 @@ import java.util.List;
 @Data
 @Builder
 public class ProductListResponse {
-    private List<ProductResponse> productResponses;
+    private List<ProductResponse> products;
     private Integer totalPages;
 }
